@@ -93,7 +93,7 @@ export const ajouRecommendations: Recommendation[] = [
   {
     title: 'Quiet campus reflection walk',
     location: 'Ajou University campus walking path',
-    duration: '15 min',
+    duration: '10–15 min',
     area: 'Meaning',
     description: 'Walk slowly and name one value that made today matter.',
     action: 'Try this step',

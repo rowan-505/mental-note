@@ -144,7 +144,7 @@ function PermaInsightCard({
           type="button"
           className="ml-auto inline-flex items-center gap-1 rounded-full bg-[#EDE9FE] px-3 py-1.5 text-xs font-bold text-[#7C3AED]"
         >
-          <span>Try this</span>
+          <span>Try</span>
           <ArrowRight size={12} />
         </button>
       </div>
