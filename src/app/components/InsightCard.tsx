@@ -1,6 +1,8 @@
+import type { ReactNode } from 'react';
+
 interface InsightCardProps {
   text: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
 }
 
 export function InsightCard({ text, icon }: InsightCardProps) {

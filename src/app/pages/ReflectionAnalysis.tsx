@@ -1,157 +1,160 @@
+import React from 'react';
 import { useNavigate } from 'react-router';
-import { Sparkles, Brain, TrendingUp, Heart, Users, Target, Award, Smile, ArrowRight, Lightbulb } from 'lucide-react';
-import { PermaAnalysisCard } from '../components/PermaAnalysisCard';
-import { GrowthVisualization } from '../components/GrowthVisualization';
+import { ArrowLeft, ArrowRight, Brain, CheckCircle2, MapPin, Sparkles, Target } from 'lucide-react';
+import { PermaProgressList } from '../components/PermaProgressList';
+import { ajouRecommendations, formatTrend, PermaScore, Recommendation, permaScores } from '../wellnessDemo';
 
 export function ReflectionAnalysis() {
   const navigate = useNavigate();
-
-  const permaScores = [
-    { icon: <Smile size={20} />, label: 'Positive Emotion', score: 78, trend: '+5' },
-    { icon: <Target size={20} />, label: 'Engagement', score: 72, trend: '+3' },
-    { icon: <Users size={20} />, label: 'Relationships', score: 85, trend: '+8' },
-    { icon: <Heart size={20} />, label: 'Meaning', score: 68, trend: '+2' },
-    { icon: <Award size={20} />, label: 'Accomplishment', score: 80, trend: '+6' },
-  ];
-
-  const permaRecommendations = [
-    {
-      area: 'Meaning',
-      score: 68,
-      icon: '🎯',
-      insight: 'Your sense of purpose could be strengthened',
-      suggestions: [
-        'Identify activities that align with your core values',
-        'Volunteer for a cause you care deeply about',
-      ],
-    },
-    {
-      area: 'Engagement',
-      score: 72,
-      icon: '⚡',
-      insight: 'Room to deepen your flow and focus',
-      suggestions: [
-        'Try activities that challenge you at just the right level',
-        'Practice single-tasking to improve concentration',
-      ],
-    },
-  ];
+  const lowAreas = permaScores
+    .filter((score) => score.trend < 0)
+    .sort((a, b) => a.trend - b.trend);
 
   return (
-    <div className="min-h-screen bg-[#F9F5FF]">
-      <div className="max-w-md mx-auto pb-8">
-        {/* Header */}
-        <div className="bg-gradient-to-br from-[#8B2FFF] via-[#C42EFF] to-[#FF2D78] text-white px-6 pt-10 pb-8 relative overflow-hidden">
-          {/* Decorative orbs */}
-          <div className="absolute top-0 right-0 w-56 h-56 bg-white/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-40 h-40 bg-[#00E5FF]/20 rounded-full blur-3xl"></div>
-          <div className="absolute top-8 right-8 w-20 h-20 bg-[#FF2D78]/20 rounded-full blur-2xl"></div>
-
-          <div className="relative">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="bg-white/20 backdrop-blur-sm p-2 rounded-xl">
-                <Brain size={20} />
+    <div className="min-h-screen bg-[#F8F5FF] pb-24">
+      <div className="max-w-md mx-auto">
+        <header className="px-6 pt-10 pb-5">
+          <div className="mb-5 flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => navigate('/journal/write')}
+              className="rounded-xl p-2 -ml-2 text-[#7C3AED] transition-colors hover:bg-[#F1ECFF]"
+            >
+              <ArrowLeft size={22} />
+            </button>
+            <div className="flex items-center gap-2 rounded-2xl border border-[#E7DFF7] bg-white px-3 py-2 shadow-sm">
+              <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-[#7C3AED] to-[#F472B6] flex items-center justify-center">
+                <span className="text-xs font-bold tracking-wide text-white">N</span>
               </div>
-              <span className="text-sm font-semibold opacity-90 tracking-wide">AI Analysis Complete</span>
+              <span className="text-sm font-bold tracking-[0.18em] text-[#241A44]">NOVA</span>
             </div>
-            <h1 className="mb-1 text-2xl font-bold" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-              Your Reflection Insights
-            </h1>
-            <p className="text-white/80 text-sm">
-              Supporting your emotional growth journey 🚀
-            </p>
           </div>
-        </div>
 
-        {/* Content */}
-        <div className="px-6 space-y-5 mt-6">
-          {/* PERMA Analysis Breakdown */}
-          <div className="bg-white rounded-3xl p-6 shadow-sm border border-[#8B2FFF]/10">
-            <div className="flex items-center justify-between mb-5">
-              <h3 className="text-[#1A0A3D]">PERMA Analysis</h3>
-              <div className="flex items-center gap-1 text-xs text-[#8B2FFF] bg-[#EEE6FF] px-3 py-1.5 rounded-full font-semibold">
-                <TrendingUp size={14} />
-                <span>Strong</span>
+          <section className="rounded-3xl border border-[#E7DFF7] bg-white p-5 shadow-sm">
+            <div className="flex items-start gap-3">
+              <div className="rounded-2xl bg-[#EDE9FE] p-3 text-[#7C3AED]">
+                <Brain size={22} />
+              </div>
+              <div>
+                <h1
+                  className="text-2xl font-bold text-[#241A44]"
+                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                >
+                  Your Reflection Insight
+                </h1>
+                <p className="mt-2 text-sm leading-relaxed text-[#7C719A]">
+                  A simple PERMA-based summary from your entry.
+                </p>
+              </div>
+            </div>
+          </section>
+        </header>
+
+        <main className="space-y-5 px-6">
+          <section className="rounded-3xl border border-[#E7DFF7] bg-white p-5 shadow-sm">
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-[#241A44]">PERMA Snapshot</h3>
+                <p className="text-sm text-[#7C719A]">Five well-being skills from this demo entry.</p>
+              </div>
+              <span className="rounded-full bg-[#FEF3C7] px-3 py-1 text-xs font-semibold text-[#92400E]">
+                Needs Care
+              </span>
+            </div>
+            <PermaProgressList scores={permaScores} />
+          </section>
+
+          <section className="rounded-3xl border border-[#E7DFF7] bg-[#F1ECFF] p-4 shadow-sm">
+            <div className="mb-4 flex items-start gap-3">
+              <div className="rounded-2xl bg-white p-2.5 text-[#7C3AED] shadow-sm">
+                <Sparkles size={18} />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-[#241A44]">Personalized Insights</h3>
+                <p className="text-sm leading-relaxed text-[#7C719A]">
+                  Localized guidance based on your PERMA reflection.
+                </p>
               </div>
             </div>
             <div className="space-y-3">
-              {permaScores.map((item, index) => (
-                <PermaAnalysisCard
-                  key={index}
-                  icon={item.icon}
-                  label={item.label}
-                  score={item.score}
-                  trend={item.trend}
-                  index={index}
-                />
+              {lowAreas.map((area, index) => (
+                <PermaInsightCard key={area.area} area={area} recommendation={getRecommendationForArea(area.area)} />
               ))}
             </div>
-          </div>
-
-          {/* AI Insights */}
-          <div className="bg-gradient-to-br from-[#8B2FFF]/6 to-[#FF2D78]/6 rounded-3xl p-6 border border-[#8B2FFF]/12">
-            <div className="flex items-start gap-3 mb-5">
-              <div className="bg-gradient-to-br from-[#8B2FFF] to-[#FF2D78] p-2.5 rounded-xl shadow-md shadow-[#8B2FFF]/25">
-                <Sparkles size={20} className="text-white" />
-              </div>
-              <div>
-                <h3 className="text-[#1A0A3D] mb-1">Personalized Insights</h3>
-                <p className="text-[#7B6B9D] text-sm">Based on your PERMA analysis</p>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              {permaRecommendations.map((item, index) => (
-                <div key={index} className="bg-white/70 backdrop-blur-sm rounded-2xl p-4 border border-[#8B2FFF]/8">
-                  <div className="flex items-start gap-3 mb-3">
-                    <span className="text-2xl">{item.icon}</span>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <h4 className="text-[#1A0A3D] font-semibold">{item.area}</h4>
-                        <span className="text-xs text-[#8B2FFF] bg-[#EEE6FF] px-2 py-1 rounded-full font-semibold">
-                          {item.score}%
-                        </span>
-                      </div>
-                      <p className="text-sm text-[#7B6B9D] italic">{item.insight}</p>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    {item.suggestions.map((suggestion, idx) => (
-                      <div key={idx} className="flex items-start gap-2">
-                        <Lightbulb size={14} className="text-[#FF2D78] mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-[#1A0A3D]">{suggestion}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Emotional Growth Visualization */}
-          <div className="bg-white rounded-3xl p-6 shadow-sm border border-[#8B2FFF]/10">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-[#1A0A3D]">Emotional Growth</h3>
-              <div className="flex items-center gap-1.5 text-xs bg-gradient-to-r from-[#8B2FFF] to-[#FF2D78] text-white px-3 py-1.5 rounded-full font-semibold">
-                <TrendingUp size={12} />
-                <span>+12% this month</span>
-              </div>
-            </div>
-            <GrowthVisualization />
-          </div>
-
-          {/* Continue Journey Button */}
-          <button
-            onClick={() => navigate('/')}
-            className="w-full bg-gradient-to-r from-[#8B2FFF] via-[#C42EFF] to-[#FF2D78] text-white py-5 rounded-3xl shadow-lg shadow-[#8B2FFF]/30 hover:shadow-xl hover:shadow-[#8B2FFF]/40 transition-all active:scale-[0.98] flex items-center justify-center gap-3"
-          >
-            <span className="font-semibold tracking-wide">Continue Your Journey</span>
-            <ArrowRight size={20} strokeWidth={2.5} />
-          </button>
-
-          <div className="h-4"></div>
-        </div>
+          </section>
+        </main>
       </div>
     </div>
+  );
+}
+
+function PermaInsightCard({
+  area,
+  recommendation,
+}: {
+  area: PermaScore;
+  recommendation: Recommendation;
+}) {
+  const isMeaning = area.area === 'Meaning';
+  const scoreBadgeClass = isMeaning
+    ? 'bg-[#FEE2E2] text-[#B91C1C]'
+    : 'bg-[#FEF3C7] text-[#92400E]';
+
+  return (
+    <article className="rounded-3xl bg-white p-4 shadow-sm">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#EDE9FE] text-[#7C3AED]">
+            {isMeaning ? <Target size={18} /> : <CheckCircle2 size={18} />}
+          </div>
+          <div className="min-w-0">
+            <h4 className="text-base font-semibold text-[#241A44]">{area.area}</h4>
+            <p className="mt-1 text-sm leading-relaxed text-[#7C719A]">
+              {isMeaning ? 'Purpose connection could be stronger.' : 'Small wins are missing today.'}
+            </p>
+          </div>
+        </div>
+        <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold ${scoreBadgeClass}`}>
+          {formatTrend(area.trend)}%
+        </span>
+      </div>
+
+      <div className="mt-4 rounded-3xl border border-[#CCFBF1] bg-[#F0FDFA] p-3.5">
+        <div className="mb-2 flex items-center gap-2">
+          <div className="rounded-xl bg-[#CCFBF1] p-2 text-[#0F766E]">
+            <MapPin size={16} />
+          </div>
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#14B8A6]">
+            Try near Ajou
+          </p>
+        </div>
+        <p className="text-sm font-semibold leading-relaxed text-[#241A44]">
+          {recommendation.description}
+        </p>
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <span className="rounded-full bg-[#F1ECFF] px-3 py-1.5 text-xs font-semibold text-[#7C719A]">
+          {isMeaning ? 'Ajou campus path' : 'Study lounge'}
+        </span>
+        <span className="rounded-full bg-[#CCFBF1] px-3 py-1.5 text-xs font-semibold text-[#0F766E]">
+          {recommendation.duration}
+        </span>
+        <button
+          type="button"
+          className="ml-auto inline-flex items-center gap-1 rounded-full bg-[#EDE9FE] px-3 py-1.5 text-xs font-bold text-[#7C3AED]"
+        >
+          <span>Try this</span>
+          <ArrowRight size={12} />
+        </button>
+      </div>
+    </article>
+  );
+}
+
+function getRecommendationForArea(area: PermaScore['area']) {
+  return (
+    ajouRecommendations.find((recommendation) => recommendation.area === area) ??
+    ajouRecommendations[0]
   );
 }

@@ -1,7 +1,8 @@
 import { TrendingUp } from 'lucide-react';
+import type { ReactNode } from 'react';
 
 interface PermaAnalysisCardProps {
-  icon: React.ReactNode;
+  icon: ReactNode;
   label: string;
   score: number;
   trend: string;

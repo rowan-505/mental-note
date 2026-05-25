@@ -1,26 +1,27 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { ArrowLeft, Mic, Sparkles, Check } from 'lucide-react';
+import { SpecificEmotionSelector } from '../components/SpecificEmotionSelector';
+import { SpecificEmotionKey, specificEmotionOptions } from '../wellnessDemo';
 
 export function JournalWrite() {
   const navigate = useNavigate();
   const [journalText, setJournalText] = useState('');
-  const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [showAutosave, setShowAutosave] = useState(false);
+  const [selectedEmotions, setSelectedEmotions] = useState<SpecificEmotionKey[]>([]);
 
-  const moods = [
-    { emoji: '😊', label: 'Happy' },
-    { emoji: '😌', label: 'Calm' },
-    { emoji: '😔', label: 'Sad' },
-    { emoji: '😰', label: 'Anxious' },
-    { emoji: '😡', label: 'Angry' },
-    { emoji: '🤔', label: 'Thoughtful' },
-  ];
+  const toggleEmotion = (emotion: SpecificEmotionKey) => {
+    setSelectedEmotions((current) =>
+      current.includes(emotion)
+        ? current.filter((selected) => selected !== emotion)
+        : [...current, emotion],
+    );
+  };
 
   useEffect(() => {
     if (journalText.length > 0) {
       setShowAutosave(true);
-      const timer = setTimeout(() => setShowAutosave(false), 2000);
+      const timer = setTimeout(() => setShowAutosave(false), 1800);
       return () => clearTimeout(timer);
     }
   }, [journalText]);
@@ -32,103 +33,71 @@ export function JournalWrite() {
   });
 
   return (
-    <div className="min-h-screen bg-[#F9F5FF] flex flex-col">
-      {/* Header */}
-      <div className="bg-white/80 backdrop-blur-lg border-b border-[#EEE6FF] sticky top-0 z-10">
-        <div className="max-w-md mx-auto px-6 py-4">
+    <div className="min-h-screen bg-[#F8F5FF] flex flex-col pb-24">
+      <div className="relative">
+        <div className="max-w-md mx-auto px-6 pt-8 pb-4">
           <div className="flex items-center justify-between mb-2">
             <button
               onClick={() => navigate('/')}
-              className="p-2 -ml-2 hover:bg-[#EEE6FF] rounded-xl transition-colors"
+              className="p-2 -ml-2 hover:bg-[#F1ECFF] rounded-xl transition-colors"
             >
-              <ArrowLeft size={22} className="text-[#8B2FFF]" />
+              <ArrowLeft size={22} className="text-[#7C3AED]" />
             </button>
-            <div className="flex items-center gap-2">
-              {showAutosave && (
-                <div className="flex items-center gap-1.5 text-xs text-[#8B2FFF] bg-[#EEE6FF] px-3 py-1.5 rounded-full font-medium">
-                  <Check size={14} />
-                  <span>Saved</span>
-                </div>
-              )}
+            <div className="flex items-center gap-1.5 text-xs text-[#0F766E] bg-[#CCFBF1] px-3 py-1.5 rounded-full font-semibold">
+              <Check size={14} className={showAutosave ? 'scale-110 transition-transform' : ''} />
+              <span>Draft saved locally</span>
             </div>
           </div>
-          <p className="text-sm text-[#7B6B9D] text-center font-medium">{currentDate}</p>
+          <p className="text-sm text-[#7C719A] text-center font-medium">{currentDate}</p>
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 max-w-md mx-auto w-full px-6 py-8 space-y-6">
-        {/* Guided Prompt */}
-        <div className="relative">
-          <div className="absolute -left-2 -top-2 w-12 h-12 bg-gradient-to-br from-[#8B2FFF]/20 to-[#FF2D78]/20 rounded-full blur-xl"></div>
-          <div className="relative bg-gradient-to-br from-[#8B2FFF]/8 to-[#FF2D78]/8 rounded-3xl p-6 border border-[#8B2FFF]/15">
-            <div className="flex items-start gap-3">
-              <div className="bg-gradient-to-br from-[#8B2FFF] to-[#FF2D78] p-2 rounded-xl shadow-md shadow-[#8B2FFF]/25">
-                <Sparkles size={18} className="text-white" />
-              </div>
-              <div className="flex-1">
-                <p className="text-[#1A0A3D] leading-relaxed font-medium">
-                  What moment affected you emotionally today?
-                </p>
-              </div>
+        <div className="rounded-3xl border border-[#E7DFF7] bg-white p-5 shadow-sm">
+          <div className="flex items-start gap-3">
+            <div className="bg-[#EDE9FE] text-[#7C3AED] p-2.5 rounded-xl">
+              <Sparkles size={18} />
+            </div>
+            <div className="flex-1">
+              <p className="text-[#241A44] leading-relaxed font-semibold">
+                What moment affected you emotionally today?
+              </p>
+              <p className="mt-1 text-sm text-[#7C719A]">
+                Write freely. This demo keeps everything local.
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Journal Text Area */}
         <div className="relative">
           <textarea
             value={journalText}
             onChange={(e) => setJournalText(e.target.value)}
             placeholder="Start writing your thoughts..."
-            className="w-full min-h-[320px] bg-white rounded-3xl p-6 border border-[#8B2FFF]/10 text-[#1A0A3D] placeholder:text-[#C9AEFF] focus:outline-none focus:ring-2 focus:ring-[#8B2FFF]/25 focus:border-[#8B2FFF]/20 resize-none leading-relaxed shadow-sm transition-all"
+            className="w-full min-h-[340px] bg-white rounded-3xl p-6 border border-[#E7DFF7] text-[#241A44] placeholder:text-[#B9AECF] focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED]/30 resize-none leading-relaxed shadow-sm transition-all"
             autoFocus
           />
-          <button className="absolute bottom-6 right-6 p-3 bg-[#EEE6FF] hover:bg-[#DDD0FF] rounded-full transition-colors group">
-            <Mic size={20} className="text-[#8B2FFF] group-hover:text-[#6B0FDD]" />
+          <button className="absolute bottom-6 right-6 p-3 bg-[#EDE9FE] hover:bg-[#DDD6FE] rounded-full transition-colors group">
+            <Mic size={20} className="text-[#7C3AED] group-hover:text-[#5B21B6]" />
           </button>
         </div>
 
-        {/* Mood Selector */}
-        <div className="space-y-3">
-          <label className="text-sm text-[#7B6B9D] block font-medium">How does this make you feel?</label>
-          <div className="grid grid-cols-6 gap-2">
-            {moods.map((mood) => (
-              <button
-                key={mood.label}
-                onClick={() => setSelectedMood(mood.label)}
-                className={`flex flex-col items-center gap-1.5 p-3 rounded-2xl transition-all ${
-                  selectedMood === mood.label
-                    ? 'bg-gradient-to-br from-[#8B2FFF] to-[#FF2D78] shadow-md shadow-[#8B2FFF]/30 scale-105'
-                    : 'bg-white hover:bg-[#EEE6FF] border border-[#8B2FFF]/10'
-                }`}
-              >
-                <span className="text-2xl">{mood.emoji}</span>
-                <span
-                  className={`text-[10px] font-medium ${
-                    selectedMood === mood.label ? 'text-white' : 'text-[#7B6B9D]'
-                  }`}
-                >
-                  {mood.label}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
+        <section className="rounded-3xl border border-[#E7DFF7] bg-white p-5 shadow-sm">
+          <SpecificEmotionSelector
+            emotions={specificEmotionOptions}
+            selectedEmotions={selectedEmotions}
+            onSelect={toggleEmotion}
+          />
+        </section>
 
-        {/* Analyze Button */}
         <button
           onClick={() => journalText.trim() && navigate('/journal/analysis')}
           disabled={!journalText.trim()}
-          className="w-full bg-gradient-to-r from-[#8B2FFF] via-[#C42EFF] to-[#FF2D78] text-white py-5 rounded-3xl shadow-lg shadow-[#8B2FFF]/30 hover:shadow-xl hover:shadow-[#8B2FFF]/40 transition-all active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-3"
+          className="w-full bg-gradient-to-r from-[#7C3AED] to-[#F472B6] text-white py-5 rounded-3xl shadow-lg shadow-[#7C3AED]/20 hover:shadow-xl hover:shadow-[#7C3AED]/25 transition-all active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-3"
         >
           <Sparkles size={20} strokeWidth={2.5} />
-          <span className="font-semibold tracking-wide">Analyze Reflection</span>
+          <span className="font-semibold tracking-wide">Create Reflection Insight</span>
         </button>
-
-        {/* Decorative Elements */}
-        <div className="absolute top-40 right-6 w-32 h-32 bg-gradient-to-br from-[#8B2FFF]/8 to-[#FF2D78]/8 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-40 left-6 w-40 h-40 bg-gradient-to-br from-[#00E5FF]/8 to-[#8B2FFF]/8 rounded-full blur-3xl pointer-events-none"></div>
       </div>
     </div>
   );

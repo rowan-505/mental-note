@@ -1,5 +1,7 @@
+import type { ReactNode } from 'react';
+
 interface PermaCardProps {
-  icon: React.ReactNode;
+  icon: ReactNode;
   label: string;
   value: number;
   gradient: string;
