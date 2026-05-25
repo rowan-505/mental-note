@@ -135,7 +135,7 @@ function PermaInsightCard({
 
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <span className="rounded-full bg-[#F1ECFF] px-3 py-1.5 text-xs font-semibold text-[#7C719A]">
-          {isMeaning ? 'Ajou campus path' : 'Study lounge'}
+          {isMeaning ? 'Ajou campus' : 'Study lounge'}
         </span>
         <span className="rounded-full bg-[#CCFBF1] px-3 py-1.5 text-xs font-semibold text-[#0F766E]">
           {recommendation.duration}
@@ -144,7 +144,7 @@ function PermaInsightCard({
           type="button"
           className="ml-auto inline-flex items-center gap-1 rounded-full bg-[#EDE9FE] px-3 py-1.5 text-xs font-bold text-[#7C3AED]"
         >
-          <span>Try</span>
+          <span>Try this</span>
           <ArrowRight size={12} />
         </button>
       </div>
