@@ -1,6 +1,6 @@
 import QRCode from "qrcode";
 
-const demoUrl = "https://mental-note-psi.vercel.app/journal/analysis";
+const demoUrl = "https://mental-note-psi.vercel.app";
 
 await QRCode.toFile("public/demo-qr.png", demoUrl, {
   width: 900,
