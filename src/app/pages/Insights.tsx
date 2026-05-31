@@ -1,4 +1,5 @@
 import { BarChart3, Heart, Sparkles } from 'lucide-react';
+import { pageInnerClass, pageMainClass, pageShellClass } from '../components/pageLayout';
 import { PermaProgressList } from '../components/PermaProgressList';
 import { WeeklyTrendCard } from '../components/WeeklyTrendCard';
 import {
@@ -10,8 +11,8 @@ import {
 
 export function Insights() {
   return (
-    <div className="min-h-screen bg-[#F8F5FF] pb-24">
-      <div className="mx-auto max-w-md">
+    <div className={pageShellClass}>
+      <div className={pageInnerClass}>
         <header className="px-6 pt-10 pb-6">
           <div className="flex items-center justify-between">
             <div>
@@ -29,14 +30,14 @@ export function Insights() {
           </div>
         </header>
 
-        <main className="space-y-5 px-6">
+        <main className={pageMainClass}>
           <WeeklyTrendCard title="Weekly Mood Trend" improvementLabel="+5% steadier this week" />
 
           <section className="rounded-3xl border border-[#E7DFF7] bg-white p-5 shadow-sm">
             <div className="mb-5 flex items-start justify-between gap-3">
               <div>
                 <h3 className="text-lg font-semibold text-[#241A44]">PERMA Balance</h3>
-                <p className="text-sm text-[#7C719A]">Relationships leads; Meaning needs care.</p>
+                <p className="text-sm text-[#7C719A]">Relationships leads; Meaning could use gentle support.</p>
               </div>
               <div className="rounded-2xl bg-[#CCFBF1] p-2.5 text-[#0F766E]">
                 <Heart size={18} />
@@ -48,11 +49,11 @@ export function Insights() {
           <section className="grid grid-cols-2 gap-3">
             <InsightStat label="Most frequent emotion" value={mostFrequentSpecificEmotion} />
             <InsightStat label="Strongest area" value={strongestPermaArea} />
-            <InsightStat label="Needs care" value={carePermaArea} tone="care" />
+            <InsightStat label="Focus area" value={carePermaArea} tone="care" />
             <InsightStat label="Streak" value="4 days" />
           </section>
 
-          <section className="rounded-3xl border border-[#E7DFF7] bg-[#F1ECFF] p-5">
+          <section className="rounded-3xl border border-[#E7DFF7] bg-[#F1ECFF] p-5 shadow-sm">
             <div className="mb-3 flex items-center gap-3">
               <div className="rounded-2xl bg-white p-2.5 text-[#7C3AED]">
                 <Sparkles size={18} />

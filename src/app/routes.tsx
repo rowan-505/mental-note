@@ -3,6 +3,7 @@ import { AppLayout } from "./AppLayout";
 import { Dashboard } from "./pages/Dashboard";
 import { Insights } from "./pages/Insights";
 import { JournalWrite } from "./pages/JournalWrite";
+import { Mission } from "./pages/Mission";
 import { Profile } from "./pages/Profile";
 import { ReflectionAnalysis } from "./pages/ReflectionAnalysis";
 
@@ -26,6 +27,10 @@ export const router = createBrowserRouter([
       {
         path: "insights",
         Component: Insights,
+      },
+      {
+        path: "mission",
+        Component: Mission,
       },
       {
         path: "profile",

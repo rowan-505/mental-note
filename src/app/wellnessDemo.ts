@@ -179,14 +179,14 @@ export const permaScores: PermaScore[] = [
     area: 'Meaning',
     score: 62,
     trend: -6,
-    note: 'Main Needs Care: connect today’s effort with purpose and values.',
+    note: 'Gentle focus: connect today’s effort with purpose and values.',
     tone: 'care',
   },
   {
     area: 'Accomplishment',
     score: 68,
     trend: -2,
-    note: 'Secondary low area: keep wins smaller and easier to complete.',
+    note: 'Also worth a gentle focus: keep wins smaller and easier to complete.',
     tone: 'caution',
   },
 ];
