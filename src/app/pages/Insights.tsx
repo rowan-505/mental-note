@@ -1,6 +1,7 @@
 import { BarChart3, Heart, Sparkles } from 'lucide-react';
 import { pageInnerClass, pageMainClass, pageShellClass } from '../components/pageLayout';
 import { PermaProgressList } from '../components/PermaProgressList';
+import { StreakCard } from '../components/StreakCard';
 import { WeeklyTrendCard } from '../components/WeeklyTrendCard';
 import {
   carePermaArea,
@@ -33,11 +34,13 @@ export function Insights() {
         <main className={pageMainClass}>
           <WeeklyTrendCard title="Weekly Mood Trend" improvementLabel="+5% steadier this week" />
 
+          <StreakCard />
+
           <section className="rounded-3xl border border-[#E7DFF7] bg-white p-5 shadow-sm">
             <div className="mb-5 flex items-start justify-between gap-3">
               <div>
                 <h3 className="text-lg font-semibold text-[#241A44]">PERMA Balance</h3>
-                <p className="text-sm text-[#7C719A]">Relationships leads; Meaning could use gentle support.</p>
+                <p className="text-sm text-[#7C719A]">Meaning needs support; Accomplishment is the next focus.</p>
               </div>
               <div className="rounded-2xl bg-[#CCFBF1] p-2.5 text-[#0F766E]">
                 <Heart size={18} />
@@ -84,7 +87,9 @@ function InsightStat({
   return (
     <div
       className={`rounded-3xl border p-4 shadow-sm ${
-        tone === 'care' ? 'border-[#FDE68A] bg-[#FFFBEB]' : 'border-[#E7DFF7] bg-white'
+        tone === 'care'
+          ? 'border-amber-200 bg-amber-50'
+          : 'border-[#E7DFF7] bg-white'
       }`}
     >
       <p className="text-xs text-[#7C719A]">{label}</p>

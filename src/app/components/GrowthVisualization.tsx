@@ -9,6 +9,7 @@ import {
 } from 'recharts';
 import { Leaf, TrendingUp } from 'lucide-react';
 import { carePermaArea, growthTrendData, strongestPermaArea } from '../wellnessDemo';
+import { getPermaAreaStyles } from '../../lib/permaColors';
 
 export function GrowthVisualization() {
   return (
@@ -72,7 +73,9 @@ export function GrowthVisualization() {
           <p className="mt-1 text-sm font-bold text-[#241A44]">{strongestPermaArea}</p>
         </div>
         <div className="rounded-2xl border border-[#E7DFF7] bg-[#F8F5FF] p-4">
-          <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-xl bg-[#FCE7F3] text-[#BE185D]">
+          <div
+            className={`mb-2 flex h-8 w-8 items-center justify-center rounded-xl ${getPermaAreaStyles('Meaning').icon}`}
+          >
             <Leaf size={16} />
           </div>
           <p className="text-xs text-[#7C719A]">Area needing care</p>

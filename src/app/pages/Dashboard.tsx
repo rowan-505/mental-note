@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router';
 import { Edit3 } from 'lucide-react';
-import { pageInnerClass, pageMainCompactClass, pageShellClass, tapLinkClass } from '../components/pageLayout';
+import { pageInnerClass, pageMainCompactClass, pageShellClass } from '../components/pageLayout';
 import { StreakCard } from '../components/StreakCard';
 import { MoodSelector } from '../components/MoodSelector';
 import { NovaHeader } from '../components/NovaHeader';
@@ -9,11 +9,15 @@ import { RecommendationCard } from '../components/RecommendationCard';
 import { WeeklyTrendCard } from '../components/WeeklyTrendCard';
 import { moodOptions, permaScores } from '../wellnessDemo';
 import { useWellness } from '../wellnessState';
+import { navigateToMission } from '../../lib/missionNavigation';
+import { getPermaAreaStyles } from '../../lib/permaColors';
 
 export function Dashboard() {
   const navigate = useNavigate();
   const { selectedMood, setSelectedMood, recommendation } = useWellness();
-  const moodLabel = moodOptions.find((mood) => mood.key === selectedMood)?.label ?? 'Good';
+  const meaningStyles = getPermaAreaStyles('Meaning');
+  const accomplishmentStyles = getPermaAreaStyles('Accomplishment');
+  const engagementStyles = getPermaAreaStyles('Engagement');
 
   return (
     <div className={pageShellClass}>
@@ -39,32 +43,7 @@ export function Dashboard() {
             <span className="font-semibold tracking-wide">Start Writing</span>
           </button>
 
-          <section className="rounded-3xl border border-[#E7DFF7] bg-white p-4 shadow-sm">
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <h3 className="text-sm font-semibold text-[#241A44]">Today&apos;s mission</h3>
-                <p className="mt-1 text-xs leading-relaxed text-[#7C719A]">
-                  A small Meaning + Accomplishment action is ready.
-                </p>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  <span className="rounded-full bg-[#CCFBF1] px-2.5 py-1 text-[11px] font-semibold text-[#0F766E]">
-                    5 min
-                  </span>
-                  <span className="rounded-full bg-[#EDE9FE] px-2.5 py-1 text-[11px] font-semibold text-[#7C3AED]">
-                    PERMA
-                  </span>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => navigate('/mission')}
-                aria-label="View today's mission page"
-                className={`${tapLinkClass} shrink-0 self-start`}
-              >
-                View Mission
-              </button>
-            </div>
-          </section>
+          
 
           <section className="rounded-3xl border border-[#E7DFF7] bg-white p-5 shadow-sm">
             <div className="flex items-center justify-between mb-5">
@@ -79,15 +58,15 @@ export function Dashboard() {
             <PermaProgressList scores={permaScores} />
           </section>
 
-          <StreakCard />
+          
 
           <RecommendationCard
             recommendation={recommendation}
-            moodLabel={moodLabel}
-            title="Local Recommendation"
+            title="Today's Mission"
+            onTryClick={() => navigateToMission(navigate, 'map')}
           />
 
-          <WeeklyTrendCard />
+          
 
         </div>
       </div>

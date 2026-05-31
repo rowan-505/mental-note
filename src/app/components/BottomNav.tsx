@@ -1,9 +1,19 @@
 import { useNavigate, useLocation } from 'react-router';
 import { Home, BookOpen, BarChart3, Target, User } from 'lucide-react';
+import { navigateToMission } from '../../lib/missionNavigation';
 
 export function BottomNav() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const handleNavigate = (path: string) => {
+    if (path === '/mission') {
+      navigateToMission(navigate, 'top');
+      return;
+    }
+
+    navigate(path);
+  };
 
   const navItems = [
     { icon: <Home size={20} />, label: 'Home', path: '/', match: ['/'] },
@@ -29,7 +39,7 @@ export function BottomNav() {
               <button
                 key={item.path}
                 type="button"
-                onClick={() => navigate(item.path)}
+                onClick={() => handleNavigate(item.path)}
                 aria-current={isActive ? 'page' : undefined}
                 aria-label={`${item.label} tab`}
                 className={`flex min-h-14 min-w-[3.5rem] flex-col items-center justify-center gap-0.5 rounded-2xl px-2 py-1.5 transition-all ${

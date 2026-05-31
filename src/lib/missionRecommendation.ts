@@ -13,6 +13,9 @@ export const demoPermaScores: PermaScores = {
   A: 68,
 };
 
+export const PRIMARY_FOCUS_PERMA: PermaKey = 'M';
+export const SECONDARY_FOCUS_PERMA: PermaKey = 'A';
+
 /**
  * Returns the lowest-scoring PERMA areas for demo mission targeting.
  * Demo logic only — not medical or psychological diagnosis.
@@ -69,6 +72,71 @@ export function scoreMissionForUser(
   return score;
 }
 
+function scoreFocusMission(mission: Mission, mbtiType: string): number {
+  const focusAreas = getLowestPermaAreas(demoPermaScores);
+  let score = scoreMissionForUser(mission, focusAreas, mbtiType);
+
+  if (mission.perma === PRIMARY_FOCUS_PERMA) {
+    score += 25;
+  }
+
+  if (mission.perma === SECONDARY_FOCUS_PERMA) {
+    score += 15;
+  }
+
+  if (mission.id === 'm-future-goal-link') {
+    score += 20;
+  }
+
+  return score;
+}
+
+/**
+ * Demo missions aligned with Meaning-first and Accomplishment-second focus.
+ */
+export function getFocusMissionCandidatePool(): Mission[] {
+  return missions.filter(
+    (mission) =>
+      mission.perma === PRIMARY_FOCUS_PERMA ||
+      mission.perma === SECONDARY_FOCUS_PERMA ||
+      mission.supports.includes(PRIMARY_FOCUS_PERMA) ||
+      mission.supports.includes(SECONDARY_FOCUS_PERMA),
+  );
+}
+
+export function getDefaultFocusMission(): Mission {
+  return (
+    missions.find((mission) => mission.id === 'm-future-goal-link') ??
+    getFocusMissionCandidatePool()[0] ??
+    missions[0]
+  );
+}
+
+export function pickFocusMission(excludeId: string | undefined, mbtiType: string): Mission {
+  let pool = getFocusMissionCandidatePool().filter((mission) => mission.id !== excludeId);
+
+  if (pool.length === 0) {
+    pool = getFocusMissionCandidatePool();
+  }
+
+  const scored = pool
+    .map((mission) => ({ mission, score: scoreFocusMission(mission, mbtiType) }))
+    .sort((a, b) => b.score - a.score);
+
+  const topPool = scored.slice(0, 4);
+  const totalWeight = topPool.reduce((sum, item) => sum + Math.max(item.score, 1), 0);
+  let roll = Math.random() * totalWeight;
+
+  for (const item of topPool) {
+    roll -= Math.max(item.score, 1);
+    if (roll <= 0) {
+      return item.mission;
+    }
+  }
+
+  return topPool[0]?.mission ?? getDefaultFocusMission();
+}
+
 /**
  * Picks top demo mission recommendations from static data.
  * Demo logic only — not medical or psychological diagnosis.
@@ -79,8 +147,9 @@ export function getRecommendedMissions(
   limit = 2,
 ): Mission[] {
   const focusAreas = getLowestPermaAreas(scores);
+  const focusPool = getFocusMissionCandidatePool();
 
-  return [...missions]
+  return [...focusPool]
     .sort(
       (a, b) =>
         scoreMissionForUser(b, focusAreas, mbtiType) -

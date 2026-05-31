@@ -2,7 +2,36 @@ import { useNavigate } from 'react-router';
 import { ArrowLeft, ArrowRight, Brain, CheckCircle2, MapPin, Sparkles, Target } from 'lucide-react';
 import { pageInnerClass, pageMainClass, pageShellClass } from '../components/pageLayout';
 import { PermaProgressList } from '../components/PermaProgressList';
-import { ajouRecommendations, formatTrend, PermaScore, Recommendation, permaScores } from '../wellnessDemo';
+import { getPermaAreaStyles } from '../../lib/permaColors';
+import { navigateToMission } from '../../lib/missionNavigation';
+import { formatTrend, PermaScore, permaScores } from '../wellnessDemo';
+
+const INSIGHT_CONTENT: Record<
+  'Meaning' | 'Accomplishment',
+  {
+    description: string;
+    recommendation: string;
+    reflection: string;
+    location: string;
+    duration: string;
+  }
+> = {
+  Meaning: {
+    description: 'Your reflection shows less connection to purpose today.',
+    recommendation: 'Walk slowly and name one value that made today matter.',
+    reflection: 'Write one sentence: Today mattered because…',
+    location: 'Ajou campus',
+    duration: '10–15 min',
+  },
+  Accomplishment: {
+    description: 'Your reflection shows fewer small wins today.',
+    recommendation:
+      'Pick one small task, finish only the first step, and mark it as enough progress for now.',
+    reflection: 'Write one sentence: One thing I completed today was…',
+    location: 'Study lounge',
+    duration: '15 min',
+  },
+};
 
 export function ReflectionAnalysis() {
   const navigate = useNavigate();
@@ -55,10 +84,10 @@ export function ReflectionAnalysis() {
             <div className="mb-4 flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-semibold text-[#241A44]">PERMA Snapshot</h3>
-                <p className="text-sm text-[#7C719A]">Five well-being skills from this demo entry.</p>
+                <p className="text-sm text-[#7C719A]">Five well-being skills </p>
               </div>
-              <span className="rounded-full bg-[#FEF3C7] px-3 py-1 text-xs font-semibold text-[#92400E]">
-                Focus area
+              <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-600">
+                Meaning
               </span>
             </div>
             <PermaProgressList scores={permaScores} />
@@ -78,14 +107,14 @@ export function ReflectionAnalysis() {
             </div>
             <div className="space-y-3">
               {lowAreas.map((area) => (
-                <PermaInsightCard key={area.area} area={area} recommendation={getRecommendationForArea(area.area)} />
+                <PermaInsightCard key={area.area} area={area} />
               ))}
             </div>
           </section>
 
           <section className="rounded-3xl border border-[#E7DFF7] bg-white p-5 shadow-sm">
             <div className="flex items-start gap-3">
-              <div className="rounded-2xl bg-[#EDE9FE] p-2.5 text-[#7C3AED]">
+              <div className={`rounded-2xl p-2.5 ${getPermaAreaStyles('Meaning').icon}`}>
                 <Target size={18} />
               </div>
               <div className="flex-1">
@@ -94,15 +123,15 @@ export function ReflectionAnalysis() {
                   Meaning and Accomplishment need gentle support. Try a small action selected from your
                   reflection.
                 </p>
-                <button
-                  type="button"
-                  onClick={() => navigate('/mission')}
-                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-3xl bg-gradient-to-r from-[#7C3AED] to-[#F472B6] py-4 text-white shadow-lg shadow-[#7C3AED]/20 transition-all hover:shadow-xl hover:shadow-[#7C3AED]/25 active:scale-[0.98]"
-                >
-                  <span className="font-semibold tracking-wide">View Mission</span>
-                </button>
               </div>
             </div>
+            <button
+              type="button"
+              onClick={() => navigateToMission(navigate, 'top')}
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-3xl bg-gradient-to-r from-[#7C3AED] to-[#F472B6] px-4 py-4 text-white shadow-lg shadow-[#7C3AED]/20 transition-all hover:shadow-xl hover:shadow-[#7C3AED]/25 active:scale-[0.98]"
+            >
+              <span className="font-semibold tracking-wide">View Mission</span>
+            </button>
           </section>
         </main>
       </div>
@@ -110,33 +139,27 @@ export function ReflectionAnalysis() {
   );
 }
 
-function PermaInsightCard({
-  area,
-  recommendation,
-}: {
-  area: PermaScore;
-  recommendation: Recommendation;
-}) {
+function PermaInsightCard({ area }: { area: PermaScore }) {
+  const navigate = useNavigate();
   const isMeaning = area.area === 'Meaning';
-  const scoreBadgeClass = isMeaning
-    ? 'bg-[#FEE2E2] text-[#B91C1C]'
-    : 'bg-[#FEF3C7] text-[#92400E]';
+  const styles = getPermaAreaStyles(area.area);
+  const content = INSIGHT_CONTENT[isMeaning ? 'Meaning' : 'Accomplishment'];
 
   return (
     <article className="rounded-3xl bg-white p-4 shadow-sm">
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-start gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#EDE9FE] text-[#7C3AED]">
+          <div
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${styles.icon}`}
+          >
             {isMeaning ? <Target size={18} /> : <CheckCircle2 size={18} />}
           </div>
           <div className="min-w-0">
             <h4 className="text-base font-semibold text-[#241A44]">{area.area}</h4>
-            <p className="mt-1 text-sm leading-relaxed text-[#7C719A]">
-              {isMeaning ? 'Purpose connection could be stronger.' : 'Small wins are missing today.'}
-            </p>
+            <p className="mt-1 text-sm leading-relaxed text-[#7C719A]">{content.description}</p>
           </div>
         </div>
-        <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold ${scoreBadgeClass}`}>
+        <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold ${styles.pill}`}>
           {formatTrend(area.trend)}%
         </span>
       </div>
@@ -151,32 +174,28 @@ function PermaInsightCard({
           </p>
         </div>
         <p className="text-sm font-semibold leading-relaxed text-[#241A44]">
-          {recommendation.description}
+          {content.recommendation}
         </p>
       </div>
 
+      <p className="mt-3 text-xs leading-snug text-[#7C719A]">{content.reflection}</p>
+
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <span className="rounded-full bg-[#F1ECFF] px-3 py-1.5 text-xs font-semibold text-[#7C719A]">
-          {isMeaning ? 'Ajou campus' : 'Study lounge'}
+          {content.location}
         </span>
         <span className="rounded-full bg-[#CCFBF1] px-3 py-1.5 text-xs font-semibold text-[#0F766E]">
-          {recommendation.duration}
+          {content.duration}
         </span>
         <button
           type="button"
-          className="ml-auto inline-flex min-h-11 items-center gap-1 rounded-full bg-[#EDE9FE] px-3 py-2 text-xs font-bold text-[#7C3AED]"
+          onClick={() => navigateToMission(navigate, 'map')}
+          className="ml-auto inline-flex min-h-11 items-center gap-1 rounded-full bg-[#EDE9FE] px-3 py-2 text-xs font-bold text-[#7C3AED] transition-colors hover:bg-[#DDD6FE]"
         >
           <span>Try this</span>
           <ArrowRight size={12} />
         </button>
       </div>
     </article>
-  );
-}
-
-function getRecommendationForArea(area: PermaScore['area']) {
-  return (
-    ajouRecommendations.find((recommendation) => recommendation.area === area) ??
-    ajouRecommendations[0]
   );
 }

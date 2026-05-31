@@ -89,6 +89,15 @@ export const specificEmotionOptions: SpecificEmotionOption[] = [
   { key: 'hopeful', emoji: '🌱', label: 'Hopeful' },
 ];
 
+export const homeFocusRecommendation: Recommendation = {
+  title: 'Quiet campus reflection walk',
+  location: 'Meaning + Accomplishment',
+  duration: '10–15 min',
+  area: 'Meaning',
+  description: 'Take a slow walk, notice one value, and write one small win.',
+  action: 'Try this step',
+};
+
 export const ajouRecommendations: Recommendation[] = [
   {
     title: 'Quiet campus reflection walk',
@@ -204,22 +213,8 @@ export function formatTrend(trend: number) {
   return trend > 0 ? `+${trend}` : `${trend}`;
 }
 
-export function getBestRecommendation(mood: MoodKey) {
-  const meaningScore = permaScores.find((score) => score.area === 'Meaning');
-
-  if (meaningScore && meaningScore.trend < 0) {
-    return ajouRecommendations[0];
-  }
-
-  if (mood === 'great' || mood === 'good') {
-    return ajouRecommendations.find((item) => item.area === 'Accomplishment') ?? ajouRecommendations[0];
-  }
-
-  if (mood === 'okay') {
-    return ajouRecommendations.find((item) => item.area === 'Meaning') ?? ajouRecommendations[0];
-  }
-
-  return ajouRecommendations.find((item) => item.area === 'Relationships') ?? ajouRecommendations[0];
+export function getBestRecommendation(_mood: MoodKey) {
+  return homeFocusRecommendation;
 }
 
 export function getInsightRecommendations(mood: MoodKey) {

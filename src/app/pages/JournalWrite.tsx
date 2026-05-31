@@ -11,6 +11,8 @@ type QuestionDraft = {
   q1: string;
   q2: string;
   q3: string;
+  q4: string;
+  q5: string;
 };
 
 const WRITING_MODE_KEY = 'nova-writing-mode';
@@ -18,12 +20,20 @@ const FREE_DRAFT_KEY = 'nova-free-draft';
 const QUESTION_DRAFT_KEY = 'nova-question-draft';
 
 const QUESTIONS: Array<{ key: keyof QuestionDraft; label: string }> = [
-  { key: 'q1', label: 'What happened today?' },
-  { key: 'q2', label: 'What emotion stayed with you the most?' },
-  { key: 'q3', label: 'What does this moment mean to you?' },
+  { key: 'q1', label: 'What emotions did you mainly experience today?' },
+  {
+    key: 'q2',
+    label: 'What activities did you do today? Were you able to stay focused on them?',
+  },
+  { key: 'q3', label: 'Who was with you today, and how did that person make you feel?' },
+  { key: 'q4', label: 'What meaning do you think today will have for you?' },
+  {
+    key: 'q5',
+    label: 'Is there anything you feel you accomplished today? It can be something very small.',
+  },
 ];
 
-const EMPTY_QUESTION_DRAFT: QuestionDraft = { q1: '', q2: '', q3: '' };
+const EMPTY_QUESTION_DRAFT: QuestionDraft = { q1: '', q2: '', q3: '', q4: '', q5: '' };
 
 function readWritingMode(): WritingMode {
   if (typeof window === 'undefined') {
@@ -57,6 +67,8 @@ function readQuestionDraft(): QuestionDraft {
       q1: parsed.q1 ?? '',
       q2: parsed.q2 ?? '',
       q3: parsed.q3 ?? '',
+      q4: parsed.q4 ?? '',
+      q5: parsed.q5 ?? '',
     };
   } catch {
     return EMPTY_QUESTION_DRAFT;
@@ -64,7 +76,7 @@ function readQuestionDraft(): QuestionDraft {
 }
 
 function combineQuestionDraft(draft: QuestionDraft): string {
-  return [draft.q1, draft.q2, draft.q3].join('\n');
+  return [draft.q1, draft.q2, draft.q3, draft.q4, draft.q5].join('\n');
 }
 
 function hasDraftContent(mode: WritingMode, freeText: string, questions: QuestionDraft): boolean {
@@ -148,23 +160,7 @@ export function JournalWrite() {
       </div>
 
       <div className="flex-1 max-w-md mx-auto w-full px-6 py-6 pb-2 space-y-5">
-        {writingMode === 'free' && (
-          <div className="rounded-3xl border border-[#E7DFF7] bg-white p-5 shadow-sm">
-            <div className="flex items-start gap-3">
-              <div className="bg-[#EDE9FE] text-[#7C3AED] p-2.5 rounded-xl">
-                <Sparkles size={18} />
-              </div>
-              <div className="flex-1">
-                <p className="text-[#241A44] leading-relaxed font-semibold">
-                  What moment affected you emotionally today?
-                </p>
-                <p className="mt-1 text-sm text-[#7C719A]">
-                  Write freely. This demo keeps everything local.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
+
 
         <div className="grid grid-cols-2 gap-2 rounded-2xl border border-[#E7DFF7] bg-white p-1 shadow-sm">
           <button
@@ -192,6 +188,24 @@ export function JournalWrite() {
             Today&apos;s Questions
           </button>
         </div>
+
+        {writingMode === 'free' && (
+          <div className="rounded-3xl border border-[#E7DFF7] bg-white p-5 shadow-sm">
+            <div className="flex items-start gap-3">
+              <div className="bg-[#EDE9FE] text-[#7C3AED] p-2.5 rounded-xl">
+                <Sparkles size={18} />
+              </div>
+              <div className="flex-1">
+                <p className="text-[#241A44] leading-relaxed font-semibold">
+                  What moment affected you emotionally today?
+                </p>
+                <p className="mt-1 text-sm text-[#7C719A]">
+                  Write freely. This demo keeps everything local.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {writingMode === 'free' ? (
           <div className="relative">
@@ -232,6 +246,9 @@ export function JournalWrite() {
                 />
               </section>
             ))}
+            <p className="rounded-2xl border border-[#FDE68A] bg-[#FFFBEB] px-4 py-3 text-sm leading-relaxed text-[#92400E]">
+              ⚠️ If nothing comes to mind, it is perfectly okay to leave the space blank.
+            </p>
           </div>
         )}
 

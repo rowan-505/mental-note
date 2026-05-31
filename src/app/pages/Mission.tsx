@@ -1,19 +1,23 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ChevronDown, Target } from 'lucide-react';
-import { LocalMapCard } from '../../components/LocalMapCard';
+import { AjouMiniMapCard } from '../../components/AjouMiniMapCard';
 import { pageInnerClass, pageMainClass, pageShellClass, tapLinkClass } from '../components/pageLayout';
-import { localPlaces } from '../../data/localPlaces';
+import { useWellness } from '../wellnessState';
 import { getMbtiSummary, normalizeMbtiType } from '../../data/mbtiGuidelines';
 import { missions, permaMeta, type Mission, type PermaKey } from '../../data/missions';
 import {
   demoPermaScores,
+  getDefaultFocusMission,
   getLowestPermaAreas,
-  getRecommendedMissions,
+  pickFocusMission,
+  PRIMARY_FOCUS_PERMA,
 } from '../../lib/missionRecommendation';
 import {
   PERSONALITY_UPDATED_EVENT,
   readPersonalityType,
 } from '../../lib/personalityStorage';
+import { mapAppMoodToPlaceMood } from '../../lib/placeRecommendation';
+import { getPermaKeyStyles } from '../../lib/permaColors';
 const PERMA_KEYS: PermaKey[] = ['P', 'E', 'R', 'M', 'A'];
 
 const MBTI_PILL_LABELS: Record<'I' | 'E' | 'S' | 'N' | 'T' | 'F' | 'J' | 'P', string> = {
@@ -67,17 +71,31 @@ function getMissionMinimumStandard(mission: Mission): string {
   return mission.minimumStandard ?? `Complete the action once within ${mission.duration}. Good enough counts.`;
 }
 
+function getWhyTodayText(mission: Mission): string {
+  if (mission.id === 'm-future-goal-link') {
+    return 'Meaning is your focus area, and this action also supports Accomplishment.';
+  }
+
+  if (mission.perma === 'M') {
+    return 'Meaning needs the most support today, and this action also supports Accomplishment.';
+  }
+
+  if (mission.perma === 'A') {
+    return 'Accomplishment is your next focus area, and this small win can support Meaning too.';
+  }
+
+  return 'Meaning needs the most support today, with Accomplishment as the next focus.';
+}
+
 function getMissionsByPerma(perma: PermaKey): Mission[] {
-  return missions.filter((mission) => mission.perma === perma).slice(0, 3);
+  return missions.filter((mission) => mission.perma === perma);
 }
 
 export function Mission() {
+  const { selectedMood } = useWellness();
   const [mbtiType, setMbtiType] = useState(readPersonalityType);
   const focusAreas = useMemo(() => getLowestPermaAreas(demoPermaScores), []);
-  const recommendedMissions = useMemo(
-    () => getRecommendedMissions(demoPermaScores, mbtiType, 2),
-    [mbtiType],
-  );
+  const [selectedMission, setSelectedMission] = useState<Mission>(() => getDefaultFocusMission());
   const personalityPills = useMemo(() => getPersonalityPills(mbtiType), [mbtiType]);
   const mbtiSummary = useMemo(() => getMbtiSummary(mbtiType), [mbtiType]);
 
@@ -92,11 +110,18 @@ export function Mission() {
   }, []);
 
   const [showGuide, setShowGuide] = useState(false);
-  const [selectedPerma, setSelectedPerma] = useState<PermaKey>(focusAreas[0]);
+  const [selectedPerma, setSelectedPerma] = useState<PermaKey>(PRIMARY_FOCUS_PERMA);
   const [expandedMissionId, setExpandedMissionId] = useState<string | null>(null);
   const [doneMissionIds, setDoneMissionIds] = useState<string[]>([]);
 
   const exploreMissions = useMemo(() => getMissionsByPerma(selectedPerma), [selectedPerma]);
+  const placeMood = mapAppMoodToPlaceMood(selectedMood);
+  const recommendationMode = showGuide ? 'mbti' : 'perma';
+
+  const changeMission = () => {
+    setSelectedMission(pickFocusMission(selectedMission.id, mbtiType));
+    setExpandedMissionId(null);
+  };
 
   const toggleExpanded = (missionId: string) => {
     setExpandedMissionId((current) => (current === missionId ? null : missionId));
@@ -134,7 +159,7 @@ export function Mission() {
             </p>
             <h2 className="mt-2 text-lg font-semibold text-[#241A44]">{formatFocusAreas(focusAreas)}</h2>
             <p className="mt-2 text-sm leading-relaxed text-[#7C719A]">
-              Small actions selected from your PERMA reflection.
+              Meaning needs the most support today. Accomplishment is the next focus.
             </p>
           </section>
 
@@ -143,7 +168,7 @@ export function Mission() {
               Personality Style
             </p>
             <h2 className="mt-2 text-lg font-semibold text-[#241A44]">
-              {mbtiType} personality style (demo)
+              {mbtiType} personality style
             </h2>
             <div className="mt-3 flex flex-wrap gap-2">
               {personalityPills.map((pill) => (
@@ -184,27 +209,38 @@ export function Mission() {
           <section className="space-y-3">
             <div>
               <h2 className="text-lg font-semibold text-[#241A44]">Recommended Today</h2>
-              <p className="text-sm text-[#7C719A]">Two small actions matched to your focus and style.</p>
+              <p className="text-sm text-[#7C719A]">
+                One small action for Meaning, with Accomplishment as the next focus.
+              </p>
             </div>
-            {recommendedMissions.map((mission) => (
-              <MissionCard
-                key={`recommended-${mission.id}`}
-                mission={mission}
-                compact={false}
-                expanded={expandedMissionId === `recommended-${mission.id}`}
-                done={doneMissionIds.includes(mission.id)}
-                onToggleExpand={() => toggleExpanded(`recommended-${mission.id}`)}
-                onMarkDone={() => markDone(mission.id)}
-              />
-            ))}
+            <MissionCard
+              key={`recommended-${selectedMission.id}`}
+              mission={selectedMission}
+              compact={false}
+              expanded={expandedMissionId === `recommended-${selectedMission.id}`}
+              done={doneMissionIds.includes(selectedMission.id)}
+              whyToday={getWhyTodayText(selectedMission)}
+              onToggleExpand={() => toggleExpanded(`recommended-${selectedMission.id}`)}
+              onMarkDone={() => markDone(selectedMission.id)}
+              onChangeMission={changeMission}
+            />
           </section>
 
-          <LocalMapCard place={localPlaces[0]} />
+          <section id="mission-map" className="scroll-mt-20">
+            <AjouMiniMapCard
+              focusAreas={focusAreas}
+              mood={placeMood}
+              mbtiType={mbtiType}
+              currentMission={selectedMission}
+              recommendationMode={recommendationMode}
+              selectedPerma={selectedPerma}
+            />
+          </section>
 
           <section className="space-y-3">
             <div>
               <h2 className="text-lg font-semibold text-[#241A44]">Explore by PERMA</h2>
-              <p className="text-sm text-[#7C719A]">Browse three missions in one area.</p>
+              <p className="text-sm text-[#7C719A]">Browse Meaning and Accomplishment missions first.</p>
             </div>
 
             <div className="flex flex-wrap gap-2">
@@ -257,8 +293,10 @@ type MissionCardProps = {
   compact?: boolean;
   expanded: boolean;
   done: boolean;
+  whyToday?: string;
   onToggleExpand: () => void;
   onMarkDone: () => void;
+  onChangeMission?: () => void;
 };
 
 function MissionCard({
@@ -266,12 +304,16 @@ function MissionCard({
   compact = false,
   expanded,
   done,
+  whyToday,
   onToggleExpand,
   onMarkDone,
+  onChangeMission,
 }: MissionCardProps) {
   const supportsLabel = mission.supports.map((area) => permaMeta[area].label).join(', ');
   const cautionLabel =
     mission.cautionType && mission.cautionType !== 'none' ? mission.cautionType : null;
+
+  const permaStyles = getPermaKeyStyles(mission.perma);
 
   return (
     <article
@@ -281,7 +323,7 @@ function MissionCard({
     >
       <button type="button" onClick={onToggleExpand} className="w-full text-left">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-full bg-[#EDE9FE] px-3 py-1 text-xs font-semibold text-[#7C3AED]">
+          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${permaStyles.pill}`}>
             {mission.permaLabel}
           </span>
           <span className="rounded-full bg-[#CCFBF1] px-3 py-1 text-xs font-semibold text-[#0F766E]">
@@ -308,6 +350,12 @@ function MissionCard({
           <span className="font-semibold text-[#241A44]">Supports:</span> {supportsLabel}
         </p>
 
+        {whyToday && (
+          <p className="mt-2 text-xs text-[#7C719A]">
+            <span className="font-semibold text-[#241A44]">Why today:</span> {whyToday}
+          </p>
+        )}
+
         {mission.caution && cautionLabel && (
           <div className="mt-3 rounded-2xl border border-[#FDE68A] bg-[#FFFBEB] px-3 py-2 text-xs leading-relaxed text-[#92400E]">
             Style note ({cautionLabel}): {mission.caution}
@@ -316,13 +364,26 @@ function MissionCard({
       </button>
 
       {!expanded && (
-        <button
-          type="button"
-          onClick={onToggleExpand}
-          className="mt-4 inline-flex min-h-11 items-center justify-center rounded-full bg-[#EDE9FE] px-4 py-2.5 text-xs font-bold text-[#7C3AED] transition-colors hover:bg-[#DDD6FE]"
-        >
-          Start mission
-        </button>
+        <div className={`mt-4 ${onChangeMission ? 'grid grid-cols-2 gap-2' : ''}`}>
+          <button
+            type="button"
+            onClick={onToggleExpand}
+            className={`inline-flex min-h-11 items-center justify-center rounded-full bg-gradient-to-r from-[#7C3AED] to-[#F472B6] px-4 py-2.5 text-xs font-semibold text-white shadow-md shadow-[#7C3AED]/20 transition-all active:scale-[0.98] ${
+              onChangeMission ? 'w-full' : ''
+            }`}
+          >
+            Start Mission
+          </button>
+          {onChangeMission && (
+            <button
+              type="button"
+              onClick={onChangeMission}
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#E7DFF7] bg-[#F8F5FF] px-4 py-2.5 text-xs font-semibold text-[#7C3AED] transition-colors hover:bg-[#EDE9FE]"
+            >
+              Change Mission
+            </button>
+          )}
+        </div>
       )}
 
       {expanded && (
@@ -361,7 +422,7 @@ function MissionCard({
             disabled={done}
             className="w-full rounded-3xl bg-gradient-to-r from-[#7C3AED] to-[#F472B6] py-3 text-sm font-semibold text-white shadow-lg shadow-[#7C3AED]/20 transition-all active:scale-[0.98] disabled:cursor-default disabled:opacity-70"
           >
-            {done ? 'Done for demo' : 'Mark as done'}
+            {done ? 'Done' : 'Mark as done'}
           </button>
         </div>
       )}
