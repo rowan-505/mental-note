@@ -214,7 +214,6 @@ export function JournalWrite() {
               onChange={(event) => setJournalText(event.target.value)}
               placeholder="Start writing your thoughts..."
               className="w-full min-h-[340px] bg-white rounded-3xl p-6 border border-[#E7DFF7] text-[#241A44] placeholder:text-[#B9AECF] focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED]/30 resize-none leading-relaxed shadow-sm transition-all"
-              autoFocus
             />
             <button
               type="button"
