@@ -29,7 +29,7 @@ export function BottomNav() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-[#E7DFF7] bg-white/95 shadow-lg shadow-[#241A44]/5 backdrop-blur-lg pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+    <nav className="fixed bottom-0 left-0 right-0 z-[9999] border-t border-[#E7DFF7] bg-white/95 shadow-lg shadow-[#241A44]/5 backdrop-blur-lg pb-[max(0.75rem,env(safe-area-inset-bottom))]">
       <div className="mx-auto max-w-md px-2 py-2">
         <div className="flex items-center justify-around">
           {navItems.map((item) => {

@@ -117,7 +117,7 @@ export function AjouMiniMapCard({
         <p className="mt-1 text-[10px] text-[#7C719A]">Demo recommendation · matched to your reflection</p>
       </div>
 
-      <div className="ajou-mini-map mt-3 overflow-hidden rounded-xl border border-[#E7DFF7]">
+      <div className="ajou-mini-map relative z-0 mt-3 overflow-hidden rounded-xl border border-[#E7DFF7]">
         <MapContainer
           center={mapCenter}
           zoom={MAP_ZOOM}
@@ -128,6 +128,7 @@ export function AjouMiniMapCard({
           touchZoom={false}
           boxZoom={false}
           keyboard={false}
+          className="relative z-0 h-[152px] w-full rounded-xl"
           style={{ height: MAP_HEIGHT, width: '100%' }}
         >
           <TileLayer
